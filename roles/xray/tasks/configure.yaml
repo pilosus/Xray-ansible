@@ -54,4 +54,4 @@
     src: config.json.j2
     dest: "{{ (xray_path, 'config.json') | path_join }}"
     mode: '0644'
-  notify: restart xray
+  notify: Restart Xray

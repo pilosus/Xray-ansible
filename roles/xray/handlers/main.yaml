@@ -1,0 +1,5 @@
+---
+- name: Restart Xray
+  ansible.builtin.systemd:
+    name: xray
+    state: restarted

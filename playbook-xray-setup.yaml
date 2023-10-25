@@ -8,8 +8,3 @@
     xray_path: "/opt/xray"
   roles:
     - xray
-  handlers:
-    - name: Restart Xray
-      ansible.builtin.systemd:
-        name: xray
-        state: restarted
