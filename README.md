@@ -88,6 +88,6 @@ The Ansible playbook and the `xray` role have been originally
 developed by [@dmgening](https://github.com/dmgening) and
 productionized by [@pilosus](https://github.com/pilosus).
 
-The playbook rely heavily on the
+The playbook relies heavily on the
 [tutorial](https://habr.com/ru/articles/731608/) (in Russian; last
 accessed on 25.10.23) by MiraclePtr.
