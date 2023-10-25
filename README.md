@@ -51,6 +51,7 @@ ansible-playbook -v --limit xray playbook-xray-setup.yaml --inventory ~/.ansible
 5. Server -> New profile -> Type VLESS
 6. Edit settings:
 
+```
 Common:
 Name: you profile name
 Address: your Linux machine IP address/DNS
@@ -73,6 +74,7 @@ TLS camouflage Settings:
 uTLS: chrome
 Reality Pbk: ansible_facts -> xray -> x25519_public
 Reaily Sid: ansible_facts -> xray -> short_id
+```
 
 7. Save settings
 8. Select the new profile in the list -> right mouse click -> Start
