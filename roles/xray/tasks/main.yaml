@@ -1,0 +1,24 @@
+---
+- name: Install Xray
+  ansible.builtin.include_tasks: install.yaml
+
+- name: Update systemd service config
+  ansible.builtin.template:
+    src: xray.service.j2
+    dest: /etc/systemd/system/xray.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd to recognize the Xray service
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start Xray service
+  ansible.builtin.systemd:
+    name: xray
+    enabled: true
+    state: started
+
+- name: Configure XRay
+  ansible.builtin.include_tasks: configure.yaml

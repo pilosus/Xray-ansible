@@ -1,0 +1,4 @@
+short_id: "{{ short_id_result.stdout }}"
+uuid: "{{ uuid_result.stdout }}"
+x25519_private: "{{ x25519_result.stdout.split('\n')[0].split(': ')[1] }}"
+x25519_public: "{{ x25519_result.stdout.split('\n')[1].split(': ')[1] }}"

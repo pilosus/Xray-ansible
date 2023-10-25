@@ -1,0 +1,51 @@
+- name: Check currently installed Xray version
+  ansible.builtin.slurp:
+    src: "{{ (xray_path, 'version') | path_join }}"
+  register: xray_version_current
+  failed_when: false
+
+- name: Get release, unpack, install, clean up
+  vars:
+    xray_filename: "Xray-{{ xray_platform }}.zip"
+    xray_tmp_filename: "/tmp/{{ xray_filename }}"
+  when: xray_version_current.content | b64decode | default('') | trim != xray_version
+  block:
+    - name: Ensure unzip is installed
+      ansible.builtin.package:
+        name: unzip
+        state: present
+
+    - name: Download Xray binaries
+      ansible.builtin.get_url:
+        url: "https://github.com/XTLS/Xray-core/releases/download/{{ xray_version }}/{{ xray_filename }}"
+        dest: "{{ xray_tmp_filename }}"
+        mode: '0644'
+
+    - name: Create Xray directory
+      ansible.builtin.file:
+        path: /opt/xray
+        state: directory
+        mode: '0644'
+
+    - name: Unzip Xray binaries
+      ansible.builtin.unarchive:
+        src: "{{ xray_tmp_filename }}"
+        dest: "/opt/xray/"
+        mode: '0644'
+        remote_src: true
+
+    - name: Make Xray binary executable
+      ansible.builtin.file:
+        path: "{{ (xray_path, 'xray') | path_join }}"
+        mode: '0755'
+
+    - name: Store Xray version
+      ansible.builtin.copy:
+        content: "{{ xray_version }}"
+        dest: "{{ (xray_path, 'version') | path_join }}"
+        mode: '0644'
+
+    - name: Cleanup downloaded zip
+      ansible.builtin.file:
+        path: "{{ xray_tmp_filename }}"
+        state: absent

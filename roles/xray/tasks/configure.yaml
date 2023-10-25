@@ -1,0 +1,57 @@
+- name: Check if Xray config variables file exist
+  ansible.builtin.stat:
+    path: "{{ (xray_path, 'config_vars.yaml') | path_join }}"
+  register: config_vars_stat
+
+- name: Get Xray config
+  when: config_vars_stat.stat.exists
+  block:
+    - name: Read Xray config variables
+      ansible.builtin.slurp:
+        src: "{{ (xray_path, 'config_vars.yaml') | path_join }}"
+      register: config_vars
+
+    - name: Decode and set Xray variables from file
+      ansible.builtin.set_fact:
+        xray: "{{ config_vars['content'] | b64decode | from_yaml }}"
+
+- name: Set Xray config variables
+  when: not config_vars_stat.stat.exists
+  block:
+    - name: Create xray_short_id
+      ansible.builtin.command: openssl rand -hex 8
+      register: short_id_result
+      changed_when: true
+
+    - name: Create xray_uuid
+      ansible.builtin.command:
+        cmd: "{{ (xray_path, 'xray') | path_join }} uuid"
+      register: uuid_result
+      changed_when: true
+
+    - name: Generate x25519 keys
+      ansible.builtin.command:
+        cmd: "{{ (xray_path, 'xray') | path_join }} x25519"
+      register: x25519_result
+      changed_when: true
+
+    - name: Set variables
+      ansible.builtin.set_fact:
+        xray:
+          short_id: "{{ short_id_result.stdout }}"
+          uuid: "{{ uuid_result.stdout }}"
+          x25519_private: "{{ x25519_result.stdout.split('\n')[0].split(': ')[1] }}"
+          x25519_public: "{{ x25519_result.stdout.split('\n')[1].split(': ')[1] }}"
+
+    - name: Write variables file
+      ansible.builtin.template:
+        src: variables.yaml.j2
+        dest: "{{ (xray_path, 'config_vars.yaml') | path_join }}"
+        mode: '0644'
+
+- name: Write new Xray config
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: "{{ (xray_path, 'config.json') | path_join }}"
+    mode: '0644'
+  notify: restart xray
