@@ -1,8 +1,3 @@
-- name: Check if Xray were installed previously
-  ansible.builtin.stat:
-    path: "{{ (xray_path, 'version') | path_join }}"
-  register: xray_version_file
-
 - name: Check currently installed Xray version
   ansible.builtin.slurp:
     src: "{{ (xray_path, 'version') | path_join }}"
@@ -13,7 +8,7 @@
   vars:
     xray_filename: "Xray-{{ xray_platform }}.zip"
     xray_tmp_filename: "/tmp/{{ xray_filename }}"
-  when: (not xray_version_file.stat.exists) or (xray_version_current.content | b64decode | default('') | trim != xray_version)
+  when: (xray_version_current.content is not defined) or (xray_version_current.content | b64decode | default('') | trim != xray_version)
   block:
     - name: Ensure unzip is installed
       ansible.builtin.package:
