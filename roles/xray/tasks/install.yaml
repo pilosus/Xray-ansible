@@ -28,14 +28,14 @@
 
     - name: Create Xray directory
       ansible.builtin.file:
-        path: /opt/xray
+        path: "{{ xray_path }}"
         state: directory
         mode: '0644'
 
     - name: Unzip Xray binaries
       ansible.builtin.unarchive:
         src: "{{ xray_tmp_filename }}"
-        dest: "/opt/xray/"
+        dest: "{{ xray_path }}"
         mode: '0644'
         remote_src: true
 

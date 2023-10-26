@@ -1,14 +1,14 @@
 # xray-ansible: get XTLS/Xray server up & running using Ansible
 
-Get your [XTLS/Xray](https://github.com/xtls) server up and running,
-connect to it with the [NekoRay/NekoBox](https://github.com/MatsuriDayo/nekoray/releases) client.
+Get your [XTLS/Xray](https://github.com/xtls) server up and running
+with [Ansible](https://www.ansible.com/).
 
 ## Requirements
 
-1. A Linux machine (DigitalOcean's 1vCPU-512MB-10GB Basic droplet with Ubuntu 23.10 will do just fine)
+1. A Linux machine with `systemd` (tested with DigitalOcean's 1vCPU-512MB-10GB Ubuntu 23.10 droplet)
 2. SSH config to access the Linux machine as a `root` (to make Ansible playbook work)
-3. Python 3 & `pip`
-4. [NekoRay/NekoBox](https://github.com/MatsuriDayo/nekoray/releases) client.
+3. Python & `pip`
+4. (Optional) [NekoRay/NekoBox](https://github.com/MatsuriDayo/nekoray) client (tested with v3.23)
 
 ## Provision the Linux machine
 
@@ -35,11 +35,30 @@ xray-az-label-1 ansible_host=your.machine.ip.address
 5. Run the playbook with verbosity 1:
 
 ```
-ansible-playbook -v --limit xray playbook-xray-setup.yaml --inventory ~/.ansible/hosts --user root
+ansible-playbook -v --limit xray playbook-xray-setup.yaml \
+    --inventory ~/.ansible/hosts \
+    --user root
 ```
 
 6. Note the `ansible_facts` from the step `xray: Decode and set Xray
    variables from file`, you will need them to set up your client
+   
+## Variables
+
+The playbook is parametrized with the following variables:
+
+- `xray_version` - version string of the [Xray-core](https://github.com/XTLS/Xray-core/tags) [default `v1.8.1`]
+- `xray_platform` - platfor the binary compiled for, see [Xray-core](https://github.com/XTLS/Xray-core/tags) releases for more platforms [default `linux-64`]
+- `xray_path` - path for the Xray-core installation [default `/opt/xray`]
+
+Use `-e variable=value` Ansible CLI argument to change default values, e.g.:
+
+```
+ansible-playbook -v --limit xray playbook-xray-setup.yaml \
+    --inventory ~/.ansible/hosts \
+    --user root \
+    -e xray_version=v1.8.4
+```
 
 ## Set up the client
 
@@ -84,9 +103,9 @@ Reaily Sid: ansible_facts -> xray -> short_id
 
 # Credits
 
-The Ansible playbook and the `xray` role have been originally
-developed by [@dmgening](https://github.com/dmgening) and
-productionized by [@pilosus](https://github.com/pilosus).
+The Ansible playbook and the `xray` role have been developed by
+[dmgening](https://github.com/dmgening) and productionized by
+[pilosus](https://github.com/pilosus).
 
 The playbook relies heavily on the
 [tutorial](https://habr.com/ru/articles/731608/) (in Russian; last
