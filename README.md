@@ -48,7 +48,7 @@ ansible-playbook -v --limit xray playbook-xray-setup.yaml \
 The playbook is parametrized with the following variables:
 
 - `xray_version` - version string of the [Xray-core](https://github.com/XTLS/Xray-core/tags) [default `v1.8.1`]
-- `xray_platform` - platfor the binary compiled for, see [Xray-core](https://github.com/XTLS/Xray-core/tags) releases for more platforms [default `linux-64`]
+- `xray_platform` - platform the binary compiled for, see [Xray-core](https://github.com/XTLS/Xray-core/tags) releases for more platforms [default `linux-64`]
 - `xray_path` - path for the Xray-core installation [default `/opt/xray`]
 
 Use `-e variable=value` Ansible CLI argument to change default values, e.g.:
